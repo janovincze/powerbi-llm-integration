@@ -1,0 +1,156 @@
+{
+  "name": "Company Analytics Theme",
+  "description": "Standard company theme for all PowerBI reports",
+  "dataColors": [
+    "#0066CC",
+    "#00994D",
+    "#FF6600",
+    "#CC0000",
+    "#6600CC",
+    "#009999",
+    "#666666",
+    "#333333",
+    "#99CCFF",
+    "#99E6B3"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#333333",
+  "tableAccent": "#0066CC",
+  "good": "#00994D",
+  "neutral": "#FF6600",
+  "bad": "#CC0000",
+  "maximum": "#0066CC",
+  "center": "#FFFFFF",
+  "minimum": "#CC0000",
+  "textClasses": {
+    "title": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 16,
+      "color": "#333333"
+    },
+    "header": {
+      "fontFace": "Segoe UI Semibold",
+      "fontSize": 12,
+      "color": "#333333"
+    },
+    "label": {
+      "fontFace": "Segoe UI",
+      "fontSize": 10,
+      "color": "#666666"
+    },
+    "callout": {
+      "fontFace": "Segoe UI Light",
+      "fontSize": 28,
+      "color": "#0066CC"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "color": {"solid": {"color": "#FFFFFF"}}
+          }
+        ],
+        "border": [
+          {
+            "color": {"solid": {"color": "#E6E6E6"}},
+            "width": 1
+          }
+        ],
+        "titleFontColor": [
+          {"value": "#333333"}
+        ],
+        "titleFontFamily": [
+          {"value": "Segoe UI Semibold"}
+        ],
+        "titleFontSize": [
+          {"value": 12}
+        ]
+      }
+    },
+    "card": {
+      "*": {
+        "wordWrap": [{"value": true}],
+        "categoryLabel": {
+          "show": [{"value": true}],
+          "fontSize": [{"value": 10}],
+          "fontColor": [{"value": "#666666"}]
+        },
+        "calloutValue": {
+          "fontSize": [{"value": 28}],
+          "fontColor": [{"value": "#0066CC"}]
+        }
+      }
+    },
+    "barChart": {
+      "*": {
+        "categoryAxis": {
+          "labelColor": [{"value": "#666666"}],
+          "fontSize": [{"value": 10}]
+        },
+        "valueAxis": {
+          "labelColor": [{"value": "#666666"}],
+          "fontSize": [{"value": 10}],
+          "gridlineColor": [{"value": "#E6E6E6"}]
+        },
+        "dataLabels": {
+          "fontSize": [{"value": 9}]
+        }
+      }
+    },
+    "lineChart": {
+      "*": {
+        "categoryAxis": {
+          "labelColor": [{"value": "#666666"}],
+          "fontSize": [{"value": 10}]
+        },
+        "valueAxis": {
+          "labelColor": [{"value": "#666666"}],
+          "fontSize": [{"value": 10}],
+          "gridlineColor": [{"value": "#E6E6E6"}]
+        },
+        "dataLabels": {
+          "fontSize": [{"value": 9}]
+        },
+        "lineStyles": {
+          "strokeWidth": [{"value": 3}]
+        }
+      }
+    },
+    "slicer": {
+      "*": {
+        "items": {
+          "fontColor": [{"value": "#333333"}],
+          "fontSize": [{"value": 10}]
+        },
+        "selection": {
+          "selectAllCheckboxEnabled": [{"value": true}],
+          "singleSelect": [{"value": false}]
+        }
+      }
+    },
+    "table": {
+      "*": {
+        "grid": {
+          "gridVertical": [{"value": false}],
+          "gridHorizontal": [{"value": true}],
+          "gridHorizontalColor": [{"value": "#E6E6E6"}]
+        },
+        "columnHeaders": {
+          "fontColor": [{"value": "#333333"}],
+          "backColor": [{"value": "#F2F2F2"}],
+          "fontSize": [{"value": 10}]
+        },
+        "values": {
+          "fontColor": [{"value": "#333333"}],
+          "fontSize": [{"value": 10}]
+        },
+        "total": {
+          "fontColor": [{"value": "#333333"}],
+          "backColor": [{"value": "#E6F0FF"}]
+        }
+      }
+    }
+  }
+}

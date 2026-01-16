@@ -1,0 +1,92 @@
+# dbt Project Configuration
+# This is an example configuration for a project using Cortex integration
+
+name: 'cortex_analytics'
+version: '1.0.0'
+config-version: 2
+
+# Project paths
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# Target configuration
+profile: 'cortex_analytics'
+
+# Clean targets
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Model configurations
+models:
+  cortex_analytics:
+    # Default configurations for all models
+    +materialized: view
+    +schema: analytics
+
+    # Staging models
+    staging:
+      +materialized: view
+      +schema: staging
+      +tags: ['staging']
+
+    # Dimension models
+    dimensions:
+      +materialized: table
+      +schema: dimensions
+      +tags: ['dimensions']
+
+    # Fact models
+    facts:
+      +materialized: incremental
+      +schema: facts
+      +tags: ['facts']
+
+    # Mart models (for BI tools)
+    marts:
+      +materialized: table
+      +schema: marts
+      +tags: ['marts', 'powerbi']
+      +post-hook:
+        - "GRANT SELECT ON {{ this }} TO ROLE BI_READERS"
+
+# Seed configurations
+seeds:
+  cortex_analytics:
+    +schema: seeds
+
+# Snapshot configurations
+snapshots:
+  cortex_analytics:
+    +schema: snapshots
+
+# Variables
+vars:
+  # Cortex model to use (can be overridden at runtime)
+  cortex_model: 'claude-3-5-sonnet'
+
+  # Default lookback for incremental models
+  incremental_lookback_days: 3
+
+  # Feature flags
+  enable_cortex_descriptions: true
+  enable_cortex_tests: true
+  enable_cortex_quality: true
+
+# Query configuration
+query-comment:
+  comment: "dbt {{ dbt_version }} | model: {{ node.unique_id }}"
+  append: true
+
+# Logging
+log-format: json
+log-level: info
+
+# Dispatch configuration for package compatibility
+dispatch:
+  - macro_namespace: dbt
+    search_order: ['cortex_analytics', 'dbt']

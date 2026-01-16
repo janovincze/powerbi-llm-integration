@@ -1,0 +1,24 @@
+{
+  "visual": {
+    "name": "BACopilot",
+    "displayName": "BA Copilot",
+    "guid": "BACopilot1234567890",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "AI-powered assistant for Business Analysts working with PowerBI. Generate DAX, explore data, and get insights through natural language.",
+    "supportUrl": "https://github.com/your-org/powerbi-llm-stack",
+    "gitHubUrl": "https://github.com/your-org/powerbi-llm-stack"
+  },
+  "author": {
+    "name": "Your Organization",
+    "email": "support@your-org.com"
+  },
+  "apiVersion": "5.3.0",
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": null,
+  "stringResources": []
+}

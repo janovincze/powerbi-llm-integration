@@ -1,0 +1,127 @@
+{
+  "dataRoles": [
+    {
+      "displayName": "Context Data",
+      "name": "contextData",
+      "kind": "GroupingOrMeasure",
+      "displayNameKey": "Visual_ContextData"
+    }
+  ],
+  "dataViewMappings": [
+    {
+      "conditions": [
+        {
+          "contextData": {
+            "max": 100
+          }
+        }
+      ],
+      "table": {
+        "rows": {
+          "for": {
+            "in": "contextData"
+          }
+        }
+      }
+    }
+  ],
+  "objects": {
+    "general": {
+      "displayName": "General",
+      "properties": {
+        "backendUrl": {
+          "displayName": "Backend URL",
+          "description": "URL of the BA Copilot backend service",
+          "type": {
+            "text": true
+          }
+        }
+      }
+    },
+    "model": {
+      "displayName": "AI Model",
+      "properties": {
+        "modelSelection": {
+          "displayName": "Model",
+          "description": "Select the AI model to use",
+          "type": {
+            "enumeration": [
+              {
+                "value": "sonnet",
+                "displayName": "Claude Sonnet (Fast)"
+              },
+              {
+                "value": "opus",
+                "displayName": "Claude Opus (Powerful)"
+              }
+            ]
+          }
+        },
+        "enableRAG": {
+          "displayName": "Enable Knowledge Base",
+          "description": "Enable retrieval from company knowledge base",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "appearance": {
+      "displayName": "Appearance",
+      "properties": {
+        "chatHeight": {
+          "displayName": "Chat Height (%)",
+          "description": "Percentage of visual height for chat area",
+          "type": {
+            "numeric": true
+          }
+        },
+        "fontSize": {
+          "displayName": "Font Size",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "fontColor": {
+          "displayName": "Font Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "backgroundColor": {
+          "displayName": "Background Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "privileges": [
+    {
+      "name": "WebAccess",
+      "essential": true,
+      "parameters": [
+        "https://*"
+      ]
+    },
+    {
+      "name": "ExportContent",
+      "essential": false
+    }
+  ],
+  "supportsHighlight": false,
+  "supportsSynchronizingFilterState": true,
+  "supportsLandingPage": true,
+  "supportsEmptyDataView": true
+}

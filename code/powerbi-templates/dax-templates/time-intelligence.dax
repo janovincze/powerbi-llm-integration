@@ -1,0 +1,261 @@
+// ============================================
+// TIME INTELLIGENCE DAX TEMPLATES
+// ============================================
+// Standard measures for time-based analysis
+// Requires a properly configured Date table
+// ============================================
+
+
+// --------------------------------------------
+// YEAR-OVER-YEAR (YoY)
+// --------------------------------------------
+
+// YoY Growth Amount
+YoY Growth =
+VAR CurrentPeriod = [Total Sales]
+VAR PriorPeriod =
+    CALCULATE(
+        [Total Sales],
+        SAMEPERIODLASTYEAR('Date'[Date])
+    )
+RETURN
+    CurrentPeriod - PriorPeriod
+
+
+// YoY Growth Percentage
+YoY Growth % =
+VAR CurrentPeriod = [Total Sales]
+VAR PriorPeriod =
+    CALCULATE(
+        [Total Sales],
+        SAMEPERIODLASTYEAR('Date'[Date])
+    )
+RETURN
+    DIVIDE(
+        CurrentPeriod - PriorPeriod,
+        PriorPeriod,
+        BLANK()
+    )
+
+
+// YoY Growth % Formatted
+YoY Growth % (Formatted) =
+VAR Growth = [YoY Growth %]
+RETURN
+    IF(
+        ISBLANK(Growth),
+        BLANK(),
+        FORMAT(Growth, "+0.0%;-0.0%;0.0%")
+    )
+
+
+// --------------------------------------------
+// PERIOD-TO-DATE
+// --------------------------------------------
+
+// Month-to-Date
+MTD Sales =
+TOTALMTD(
+    [Total Sales],
+    'Date'[Date]
+)
+
+
+// Quarter-to-Date
+QTD Sales =
+TOTALQTD(
+    [Total Sales],
+    'Date'[Date]
+)
+
+
+// Year-to-Date
+YTD Sales =
+TOTALYTD(
+    [Total Sales],
+    'Date'[Date]
+)
+
+
+// YTD Prior Year (for comparison)
+YTD Sales PY =
+CALCULATE(
+    [YTD Sales],
+    SAMEPERIODLASTYEAR('Date'[Date])
+)
+
+
+// YTD vs Prior Year %
+YTD vs PY % =
+VAR CurrentYTD = [YTD Sales]
+VAR PriorYTD = [YTD Sales PY]
+RETURN
+    DIVIDE(
+        CurrentYTD - PriorYTD,
+        PriorYTD,
+        BLANK()
+    )
+
+
+// --------------------------------------------
+// ROLLING PERIODS
+// --------------------------------------------
+
+// Rolling 3 Months
+R3M Sales =
+CALCULATE(
+    [Total Sales],
+    DATESINPERIOD(
+        'Date'[Date],
+        MAX('Date'[Date]),
+        -3,
+        MONTH
+    )
+)
+
+
+// Rolling 12 Months
+R12M Sales =
+CALCULATE(
+    [Total Sales],
+    DATESINPERIOD(
+        'Date'[Date],
+        MAX('Date'[Date]),
+        -12,
+        MONTH
+    )
+)
+
+
+// Rolling 12 Months Average
+R12M Average =
+AVERAGEX(
+    DATESINPERIOD(
+        'Date'[Date],
+        MAX('Date'[Date]),
+        -12,
+        MONTH
+    ),
+    [Total Sales]
+)
+
+
+// --------------------------------------------
+// MONTH-OVER-MONTH (MoM)
+// --------------------------------------------
+
+// MoM Growth Amount
+MoM Growth =
+VAR CurrentPeriod = [Total Sales]
+VAR PriorPeriod =
+    CALCULATE(
+        [Total Sales],
+        DATEADD('Date'[Date], -1, MONTH)
+    )
+RETURN
+    CurrentPeriod - PriorPeriod
+
+
+// MoM Growth %
+MoM Growth % =
+VAR CurrentPeriod = [Total Sales]
+VAR PriorPeriod =
+    CALCULATE(
+        [Total Sales],
+        DATEADD('Date'[Date], -1, MONTH)
+    )
+RETURN
+    DIVIDE(
+        CurrentPeriod - PriorPeriod,
+        PriorPeriod,
+        BLANK()
+    )
+
+
+// --------------------------------------------
+// QUARTER-OVER-QUARTER (QoQ)
+// --------------------------------------------
+
+// QoQ Growth %
+QoQ Growth % =
+VAR CurrentPeriod = [Total Sales]
+VAR PriorPeriod =
+    CALCULATE(
+        [Total Sales],
+        DATEADD('Date'[Date], -1, QUARTER)
+    )
+RETURN
+    DIVIDE(
+        CurrentPeriod - PriorPeriod,
+        PriorPeriod,
+        BLANK()
+    )
+
+
+// --------------------------------------------
+// DYNAMIC PERIOD COMPARISON
+// --------------------------------------------
+
+// Period Comparison (controlled by slicer)
+// Requires a 'Comparison' table with Period values
+Period Comparison =
+VAR SelectedPeriod = SELECTEDVALUE('Comparison'[Period], "YoY")
+RETURN
+    SWITCH(
+        SelectedPeriod,
+        "YoY", [YoY Growth %],
+        "QoQ", [QoQ Growth %],
+        "MoM", [MoM Growth %],
+        [YoY Growth %]
+    )
+
+
+// --------------------------------------------
+// TREND INDICATORS
+// --------------------------------------------
+
+// Trend Arrow (for KPI visuals)
+Trend Arrow =
+VAR Growth = [YoY Growth %]
+RETURN
+    SWITCH(
+        TRUE(),
+        ISBLANK(Growth), "",
+        Growth > 0.05, "⬆",
+        Growth > 0, "↗",
+        Growth > -0.05, "↘",
+        "⬇"
+    )
+
+
+// Trend Color (for conditional formatting)
+// Returns 1 (good), 0 (neutral), -1 (bad)
+Trend Color Value =
+VAR Growth = [YoY Growth %]
+RETURN
+    SWITCH(
+        TRUE(),
+        ISBLANK(Growth), 0,
+        Growth > 0.05, 1,
+        Growth > 0, 0,
+        -1
+    )
+
+
+// --------------------------------------------
+// DATE LABELS
+// --------------------------------------------
+
+// Current Period Label
+Current Period Label =
+VAR MaxDate = MAX('Date'[Date])
+RETURN
+    FORMAT(MaxDate, "MMM YYYY")
+
+
+// Comparison Period Label
+Comparison Period Label =
+VAR MaxDate = MAX('Date'[Date])
+VAR PriorDate = EDATE(MaxDate, -12)
+RETURN
+    "vs. " & FORMAT(PriorDate, "MMM YYYY")
