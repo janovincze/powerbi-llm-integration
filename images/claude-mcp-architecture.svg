@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" style="font-family: 'Segoe UI', system-ui, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#8B7355" flood-opacity="0.15"/>
+    </filter>
+    <linearGradient id="creamBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FDF8F3"/>
+      <stop offset="100%" style="stop-color:#F8F1E9"/>
+    </linearGradient>
+    <linearGradient id="terracotta" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4896B"/>
+      <stop offset="100%" style="stop-color:#C97B5D"/>
+    </linearGradient>
+    <linearGradient id="terracottaLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8A88C"/>
+      <stop offset="100%" style="stop-color:#DFA080"/>
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="100%" style="stop-color:#FAF6F1"/>
+    </linearGradient>
+    <linearGradient id="mcpBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#5B9BD5"/>
+      <stop offset="100%" style="stop-color:#4A8BC9"/>
+    </linearGradient>
+    <linearGradient id="successGreen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7CB97C"/>
+      <stop offset="100%" style="stop-color:#5A9A5A"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="520" fill="url(#creamBg)"/>
+
+  <g opacity="0.03" stroke="#8B7355" stroke-width="1">
+    <line x1="0" y1="50" x2="800" y2="50"/>
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="150" x2="800" y2="150"/>
+    <line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="250" x2="800" y2="250"/>
+    <line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="350" x2="800" y2="350"/>
+    <line x1="0" y1="400" x2="800" y2="400"/>
+    <line x1="0" y1="450" x2="800" y2="450"/>
+  </g>
+
+  <text x="400" y="35" text-anchor="middle" font-size="22" font-weight="600" fill="#5D4E3C">Claude Opus 4.5 + MCP Architecture</text>
+  <text x="400" y="55" text-anchor="middle" font-size="12" fill="#8B7355">Model Context Protocol enables direct data infrastructure access</text>
+
+  <g filter="url(#shadow)">
+    <rect x="300" y="180" width="200" height="120" rx="12" fill="url(#cardBg)" stroke="#C97B5D" stroke-width="2"/>
+    <rect x="300" y="180" width="200" height="32" rx="12" fill="url(#terracotta)"/>
+    <rect x="300" y="200" width="200" height="12" fill="url(#terracotta)"/>
+    <text x="400" y="202" text-anchor="middle" font-size="13" font-weight="600" fill="#FFFFFF">Claude Opus 4.5</text>
+    <rect x="330" y="225" width="140" height="24" rx="12" fill="url(#terracottaLight)"/>
+    <text x="400" y="241" text-anchor="middle" font-size="10" font-weight="500" fill="#5D4E3C">Extended Thinking</text>
+    <text x="400" y="275" text-anchor="middle" font-size="10" fill="#8B7355">95%+ SQL/DAX Accuracy</text>
+    <text x="400" y="290" text-anchor="middle" font-size="10" fill="#8B7355">Complex Reasoning</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="50" y="100" width="130" height="70" rx="8" fill="url(#cardBg)" stroke="#5B9BD5" stroke-width="1.5"/>
+    <rect x="50" y="100" width="130" height="24" rx="8" fill="url(#mcpBlue)"/>
+    <rect x="50" y="116" width="130" height="8" fill="url(#mcpBlue)"/>
+    <text x="115" y="117" text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF">Snowflake MCP</text>
+    <text x="115" y="142" text-anchor="middle" font-size="9" fill="#8B7355">Schema Discovery</text>
+    <text x="115" y="156" text-anchor="middle" font-size="9" fill="#8B7355">Query Execution</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="620" y="100" width="130" height="70" rx="8" fill="url(#cardBg)" stroke="#5B9BD5" stroke-width="1.5"/>
+    <rect x="620" y="100" width="130" height="24" rx="8" fill="url(#mcpBlue)"/>
+    <rect x="620" y="116" width="130" height="8" fill="url(#mcpBlue)"/>
+    <text x="685" y="117" text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF">dbt MCP</text>
+    <text x="685" y="142" text-anchor="middle" font-size="9" fill="#8B7355">Model Definitions</text>
+    <text x="685" y="156" text-anchor="middle" font-size="9" fill="#8B7355">Lineage Info</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="50" y="205" width="130" height="70" rx="8" fill="url(#cardBg)" stroke="#5B9BD5" stroke-width="1.5"/>
+    <rect x="50" y="205" width="130" height="24" rx="8" fill="url(#mcpBlue)"/>
+    <rect x="50" y="221" width="130" height="8" fill="url(#mcpBlue)"/>
+    <text x="115" y="222" text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF">Confluence MCP</text>
+    <text x="115" y="247" text-anchor="middle" font-size="9" fill="#8B7355">Documentation</text>
+    <text x="115" y="261" text-anchor="middle" font-size="9" fill="#8B7355">Business Context</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="620" y="205" width="130" height="70" rx="8" fill="url(#cardBg)" stroke="#5B9BD5" stroke-width="1.5"/>
+    <rect x="620" y="205" width="130" height="24" rx="8" fill="url(#mcpBlue)"/>
+    <rect x="620" y="221" width="130" height="8" fill="url(#mcpBlue)"/>
+    <text x="685" y="222" text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF">PowerBI MCP</text>
+    <text x="685" y="247" text-anchor="middle" font-size="9" fill="#8B7355">DAX Patterns</text>
+    <text x="685" y="261" text-anchor="middle" font-size="9" fill="#8B7355">Report Metadata</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="335" y="90" width="130" height="60" rx="8" fill="url(#cardBg)" stroke="#5B9BD5" stroke-width="1.5"/>
+    <rect x="335" y="90" width="130" height="24" rx="8" fill="url(#mcpBlue)"/>
+    <rect x="335" y="106" width="130" height="8" fill="url(#mcpBlue)"/>
+    <text x="400" y="107" text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF">MotherDuck MCP</text>
+    <text x="400" y="132" text-anchor="middle" font-size="9" fill="#8B7355">DuckDB Analytics</text>
+  </g>
+
+  <g stroke="#5B9BD5" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M180 135 L250 135 L250 200 L300 200"/>
+    <path d="M292 193 L300 200 L292 207"/>
+    <path d="M188 128 L180 135 L188 142"/>
+  </g>
+
+  <g stroke="#5B9BD5" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M620 135 L550 135 L550 200 L500 200"/>
+    <path d="M508 193 L500 200 L508 207"/>
+    <path d="M612 128 L620 135 L612 142"/>
+  </g>
+
+  <g stroke="#5B9BD5" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M180 240 L300 240"/>
+    <path d="M292 233 L300 240 L292 247"/>
+    <path d="M188 233 L180 240 L188 247"/>
+  </g>
+
+  <g stroke="#5B9BD5" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M620 240 L500 240"/>
+    <path d="M508 233 L500 240 L508 247"/>
+    <path d="M612 233 L620 240 L612 247"/>
+  </g>
+
+  <g stroke="#5B9BD5" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M400 150 L400 180"/>
+    <path d="M393 172 L400 180 L407 172"/>
+    <path d="M393 158 L400 150 L407 158"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="300" y="330" width="200" height="50" rx="10" fill="url(#terracotta)"/>
+    <text x="400" y="352" text-anchor="middle" font-size="11" font-weight="600" fill="#FFFFFF">Context-Aware</text>
+    <text x="400" y="368" text-anchor="middle" font-size="11" font-weight="600" fill="#FFFFFF">Code Generation</text>
+  </g>
+
+  <g stroke="#C97B5D" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M400 300 L400 330"/>
+    <path d="M393 322 L400 330 L407 322"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="120" y="430" width="140" height="60" rx="8" fill="url(#cardBg)" stroke="#E8D5C4" stroke-width="1.5"/>
+    <rect x="120" y="430" width="140" height="24" rx="8" fill="url(#successGreen)"/>
+    <rect x="120" y="446" width="140" height="8" fill="url(#successGreen)"/>
+    <text x="190" y="447" text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF">Streamlit App</text>
+    <text x="190" y="472" text-anchor="middle" font-size="9" fill="#8B7355">Interactive</text>
+    <text x="190" y="486" text-anchor="middle" font-size="9" fill="#8B7355">Dashboards</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="330" y="430" width="140" height="60" rx="8" fill="url(#cardBg)" stroke="#E8D5C4" stroke-width="1.5"/>
+    <rect x="330" y="430" width="140" height="24" rx="8" fill="url(#successGreen)"/>
+    <rect x="330" y="446" width="140" height="8" fill="url(#successGreen)"/>
+    <text x="400" y="447" text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF">PowerBI DAX</text>
+    <text x="400" y="472" text-anchor="middle" font-size="9" fill="#8B7355">Measures and</text>
+    <text x="400" y="486" text-anchor="middle" font-size="9" fill="#8B7355">Calculations</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="540" y="430" width="140" height="60" rx="8" fill="url(#cardBg)" stroke="#E8D5C4" stroke-width="1.5"/>
+    <rect x="540" y="430" width="140" height="24" rx="8" fill="url(#successGreen)"/>
+    <rect x="540" y="446" width="140" height="8" fill="url(#successGreen)"/>
+    <text x="610" y="447" text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF">SQL Queries</text>
+    <text x="610" y="472" text-anchor="middle" font-size="9" fill="#8B7355">Snowflake and</text>
+    <text x="610" y="486" text-anchor="middle" font-size="9" fill="#8B7355">DuckDB</text>
+  </g>
+
+  <g stroke="#C97B5D" stroke-width="2" fill="none" stroke-linecap="round">
+    <path d="M320 380 L190 380 L190 430"/>
+    <path d="M183 422 L190 430 L197 422"/>
+    <path d="M400 380 L400 430"/>
+    <path d="M393 422 L400 430 L407 422"/>
+    <path d="M480 380 L610 380 L610 430"/>
+    <path d="M603 422 L610 430 L617 422"/>
+  </g>
+
+  <g>
+    <rect x="620" y="330" width="150" height="70" rx="8" fill="url(#cardBg)" stroke="#C97B5D" stroke-width="1"/>
+    <text x="695" y="350" text-anchor="middle" font-size="10" font-weight="600" fill="#5D4E3C">Key Benefits</text>
+    <text x="695" y="368" text-anchor="middle" font-size="9" fill="#8B7355">Real-time context</text>
+    <text x="695" y="382" text-anchor="middle" font-size="9" fill="#8B7355">Zero data movement</text>
+    <text x="695" y="396" text-anchor="middle" font-size="9" fill="#C97B5D" font-weight="500">Native integration</text>
+  </g>
+
+  <g fill="none" stroke="#E8D5C4" stroke-width="1.5" opacity="0.6">
+    <path d="M15 15 L15 40 M15 15 L40 15"/>
+    <path d="M785 15 L785 40 M785 15 L760 15"/>
+    <path d="M15 505 L15 480 M15 505 L40 505"/>
+    <path d="M785 505 L785 480 M785 505 L760 505"/>
+  </g>
+</svg>

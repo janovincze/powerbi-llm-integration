@@ -8,25 +8,24 @@
 
 The convergence of Large Language Models (LLMs) with modern data stacks is transforming how organizations interact with their data. Business analysts can now ask questions in natural language, data engineers can generate SQL transformations through conversation, and entire dashboards can be created from simple text prompts.
 
-This article explores two primary approaches to integrating LLMs with a common enterprise data stack: **Snowflake** (data warehouse), **dbt Cloud** (transformation layer), **Confluence** (knowledge base), and **PowerBI** (visualization):
+This article explores three primary approaches to integrating LLMs with a common enterprise data stack: **Snowflake** (data warehouse), **dbt Cloud** (transformation layer), **Confluence** (knowledge base), and **PowerBI** (visualization):
 
-- **Option 1**: Self-hosted fine-tuned model (Mistral 7B) with RAG pipeline
+- **Option 1**: Claude Opus 4.5 + MCP Servers—the fastest path to production with 95%+ accuracy
 - **Option 2**: Snowflake Cortex AI—LLM capabilities directly within your data warehouse
+- **Option 3**: Self-hosted fine-tuned model (Mistral 7B) with RAG pipeline
 
-We'll also examine a hybrid architecture that combines the best of both approaches, and address critical questions about data privacy, iterative refinement, and automated report generation.
-
-**Note on Claude Opus 4.5:** The release of Claude Opus 4.5 is a game changer for text-to-SQL and DAX generation. In our testing, Opus 4.5 achieves **95%+ accuracy** on complex queries—surpassing even fine-tuned domain-specific models in many cases. This shifts the cost-benefit analysis significantly: for organizations without strict data sovereignty requirements, API-based approaches with Opus 4.5 now offer both superior accuracy and lower maintenance overhead. We discuss how to leverage this in the hybrid architecture section.
+We'll also examine a hybrid architecture that combines the best of all approaches, and address critical questions about data privacy, iterative refinement, and automated report generation.
 
 **What you'll learn:**
 - How each component of the stack integrates with LLM capabilities
 - Data privacy implications: Does your data go through external servers?
 - How iterative refinement improves LLM-generated queries
-- Generating PowerBI dashboards and Streamlit apps via Snowflake Cortex
+- Generating PowerBI dashboards and Streamlit apps with LLM assistance
 - A practical hybrid architecture for enterprise deployments
 
 ---
 
-## Section 1: The Modern Data Stack Context
+## The Modern Data Stack Context
 
 ### Understanding the Components
 
@@ -48,7 +47,7 @@ The architecture connects Snowflake (with Cortex AI) to dbt Cloud for transforma
 
 ---
 
-## Section 2: Critical Question—Data Privacy and API-Based LLMs
+## Critical Question—Data Privacy and API-Based LLMs
 
 Before choosing an approach, organizations must understand: **Does my actual database data go through external servers? How is it stored?**
 
@@ -85,89 +84,117 @@ If you want the LLM to analyze results and improve its query, you must send data
 
 ---
 
-## Section 3: Option 1 - Self-Hosted Fine-Tuned Mistral 7B + RAG
+## Option 1 - Claude Opus 4.5 + MCP Servers
 
-### Why Self-Host?
+### The Game Changer for BI Teams
 
-The self-hosted approach ensures **zero data leaves your infrastructure**. Every query, every result, every iteration happens within your security perimeter.
+Claude Opus 4.5 with extended thinking capabilities represents a paradigm shift in LLM-assisted data work. Combined with Model Context Protocol (MCP) servers, it provides the fastest path from natural language to production-ready code.
+
+### Why Opus 4.5 + MCP?
+
+In our testing, Claude Opus 4.5 achieves **95%+ accuracy** on complex SQL and DAX generation tasks—surpassing even fine-tuned domain-specific models. The secret is extended thinking: when you ask Opus to generate a multi-step DAX calculation with time intelligence, it reasons through the filter context, considers edge cases, and produces code that works the first time.
+
+MCP servers extend Claude's capabilities by giving it direct access to your infrastructure:
+
+| MCP Server | What It Enables |
+|------------|-----------------|
+| **Snowflake MCP** | Query execution, schema exploration, query history analysis |
+| **PowerBI Modeling MCP** | Chat with semantic models, generate DAX, understand relationships |
+| **Atlassian MCP** | Pull business definitions from Confluence, understand context |
+| **dbt MCP** | Access model lineage, tests, documentation |
+| **MotherDuck MCP** | DuckDB queries with serverless scalability |
 
 ### Architecture Overview
 
-![Self-Hosted Infrastructure](docs/diagrams/self-hosted-architecture.png)
+![Claude MCP Architecture](images/claude-mcp-architecture.svg)
 
-The self-hosted stack includes Mistral 7B with LoRA/QLoRA adapters, a RAG pipeline pulling from Confluence, Snowflake schema, and dbt metadata into a vector database (Qdrant/PGVector), and an iterative refinement loop—all running within your infrastructure.
+The architecture connects Claude Opus 4.5 to your data infrastructure through MCP servers. Claude can query Snowflake schemas, read dbt documentation, pull business definitions from Confluence, and generate context-aware code for PowerBI, Streamlit, or raw SQL.
 
-### Component 1: Fine-Tuned Mistral 7B for SQL Generation
+### The Workflow
 
-Mistral 7B has demonstrated strong performance in text-to-SQL tasks. The fine-tuning process uses Parameter-Efficient Fine-Tuning (PEFT) with QLoRA (Quantization + Low-Rank Adaptation) to minimize computational requirements while achieving domain-specific accuracy.
+1. **You ask**: "Show me monthly revenue with YoY comparison, broken down by product category"
 
-**Base Configuration:**
-- Model: `mistralai/Mistral-7B-Instruct-v0.1`
-- Training data: `b-mc2/sql-create-context` dataset + company-specific SQL patterns
-- Method: 4-bit quantization with LoRA adapters
-- Expected accuracy: ~76% on standard benchmarks, **93%+ with domain tuning** (based on our previous implementation)
+2. **Claude thinks** (extended thinking):
+   - Queries your Snowflake schema via MCP
+   - Pulls business definitions from Confluence
+   - Reviews similar measures in your PowerBI semantic model
+   - Considers your DAX patterns from the template library
 
-**Training Script:** See [setup-a-mistral-rag/fine-tuning/train_lora.py](https://github.com/janovincze/powerbi-llm-stack/blob/main/setup-a-mistral-rag/fine-tuning/train_lora.py) for the complete QLoRA fine-tuning implementation.
+3. **Claude generates**:
+```dax
+Revenue YoY % =
+VAR CurrentRevenue = [Total Revenue]
+VAR PriorYearRevenue =
+    CALCULATE(
+        [Total Revenue],
+        SAMEPERIODLASTYEAR('Date'[Date])
+    )
+RETURN
+    DIVIDE(
+        CurrentRevenue - PriorYearRevenue,
+        PriorYearRevenue,
+        BLANK()
+    )
+```
 
-### Component 2: Iterative Refinement with Full Data Access
+4. **You review** and deploy
 
-Because the LLM runs locally, you can safely show it query results and let it improve. The `IterativeSQLGenerator` class handles the generate → execute → analyze → refine loop with full data access.
+Total time? Minutes, not hours.
 
-**Implementation:** See [setup-a-mistral-rag/inference/iterative_generator.py](https://github.com/janovincze/powerbi-llm-stack/blob/main/setup-a-mistral-rag/inference/iterative_generator.py) for the complete implementation with result analysis and prompt history management.
+### Setup and Configuration
 
-### Component 3: RAG Knowledge Pipeline
+**Quick Start:**
+```bash
+# Install MCP servers
+npm install -g @anthropic/mcp-snowflake
+npm install -g @anthropic/mcp-confluence
 
-The RAG pipeline ensures your LLM has access to current business context without requiring retraining:
+# Configure connections
+export SNOWFLAKE_ACCOUNT=your_account
+export ANTHROPIC_API_KEY=your_key
+```
 
-| Source | Content | Update Frequency |
-|--------|---------|------------------|
-| Confluence | Business definitions, process docs, glossary | Daily |
-| Snowflake Schema | Table DDL, column descriptions | On schema change |
-| dbt Manifest | Model lineage, tests, documentation | On dbt run |
-| PowerBI Semantic Model | Measures, relationships, DAX logic | On publish |
+**MCP Configuration:** See [setup-b-claude-mcp/mcp-servers/](https://github.com/janovincze/powerbi-llm-stack/tree/main/setup-b-claude-mcp/mcp-servers) for complete MCP server configurations.
 
-### Infrastructure Requirements
+### Iterative Refinement Considerations
 
-The good news: **you can train and run Mistral 7B locally on a MacBook** with Apple Silicon (M1/M2/M3 with 16GB+ RAM) or any machine with a decent GPU. Enterprise-scale deployment requires more, but getting started is accessible.
+With external APIs, you should be mindful of what data you send:
 
-| Tier | Hardware | Use Case | Cost |
-|------|----------|----------|------|
-| **Development** | MacBook M1/M2/M3 (16GB+) | Training, testing, single-user | ~$0 (existing hardware) |
-| **Small Team** | Mac Studio M2 Ultra or RTX 4090 | 5-10 concurrent users | $3k-5k one-time |
-| **Production** | NVIDIA A100 or cloud GPU | Enterprise scale | $2/hr cloud or $15k+ purchase |
+- **Schema-only mode**: Send table/column metadata, no actual data—safe for all environments
+- **Aggregated results**: Send summary statistics for refinement—usually safe
+- **Full data access**: Only recommended with enterprise zero-retention agreements
 
-**Additional components:**
-| Component | Specification | Cost |
-|-----------|--------------|------|
-| Vector DB | Qdrant (self-hosted) | Free (open-source) |
-| Storage | 100GB SSD | Minimal |
-| Orchestration | Docker | Free |
+For most use cases, schema-only mode with Opus 4.5 provides excellent results without data privacy concerns.
 
-**The real cost is expertise**, not hardware. Fine-tuning requires understanding of:
-- QLoRA/LoRA techniques
-- Dataset preparation
-- Evaluation metrics
-- Deployment patterns
+### Cost Analysis
 
-We provide a complete guide in the companion repository to help you get started—see [setup-a-mistral-rag/fine-tuning/](https://github.com/janovincze/powerbi-llm-stack/tree/main/setup-a-mistral-rag/fine-tuning) for step-by-step instructions that work on consumer hardware.
+| Usage Level | Monthly Tokens | Estimated Cost |
+|-------------|----------------|----------------|
+| Light (1 analyst) | ~500K | ~$15 |
+| Medium (5 analysts) | ~5M | ~$150 |
+| Heavy (20 analysts) | ~50M | ~$1,500 |
+| Enterprise (100+ analysts) | ~500M | ~$15,000 |
+
+*Based on Claude Opus 4.5 pricing. Costs decrease significantly using Sonnet for simpler queries.*
 
 **Pros:**
-- Full data sovereignty—data never leaves your infrastructure
-- Iterative refinement with actual data is safe
-- **Can start on a MacBook** for development and testing
-- Predictable costs at scale (breakeven at >2M tokens/day)
-- Deep customization for company terminology
-- HIPAA/PCI compliance friendly
+- **95%+ accuracy** out of the box—no fine-tuning required
+- Fastest time to production (days, not months)
+- Extended thinking handles complex multi-step reasoning
+- MCP servers provide real-time access to your infrastructure
+- Low maintenance—no ML expertise required
+- Continuous model improvements from Anthropic
 
 **Cons:**
-- Requires ML/AI expertise for fine-tuning and maintenance
-- Lower baseline capability than frontier models (but 93%+ with tuning!)
-- Slower iteration cycle for model improvements
-- Production deployment needs dedicated infrastructure
+- Data sent to external API (schema/metadata typically safe)
+- Per-token costs can add up at very high volumes
+- Less control over model behavior than fine-tuned alternatives
+- Requires internet connectivity
+- Enterprise zero-retention agreements needed for sensitive data iteration
 
 ---
 
-## Section 4: Option 2 - Snowflake Cortex AI
+## Option 2 - Snowflake Cortex AI
 
 ### What is Cortex AI?
 
@@ -175,7 +202,7 @@ Snowflake Cortex is a **fully managed AI service** that runs LLMs directly withi
 
 ### Key Capabilities
 
-![Snowflake Cortex Architecture](docs/diagrams/cortex-architecture.png)
+![Snowflake Cortex Architecture](images/cortex-architecture.svg)
 
 Cortex runs entirely within your Snowflake account. Your data flows to the Cortex LLM layer (Claude, Mistral, or Llama) and results are returned—all without data leaving Snowflake.
 
@@ -250,13 +277,95 @@ Unlike API per-token pricing, Cortex uses Snowflake compute credits:
 
 ---
 
-## Section 5: Iterative Refinement—How LLMs Improve with Data Access
+## Option 3 - Self-Hosted Fine-Tuned Mistral 7B + RAG
+
+### Why Self-Host?
+
+The self-hosted approach ensures **zero data leaves your infrastructure**. Every query, every result, every iteration happens within your security perimeter.
+
+### Architecture Overview
+
+![Self-Hosted Infrastructure](images/self-hosted-architecture.svg)
+
+The self-hosted stack includes Mistral 7B with LoRA/QLoRA adapters, a RAG pipeline pulling from Confluence, Snowflake schema, and dbt metadata into a vector database (Qdrant/PGVector), and an iterative refinement loop—all running within your infrastructure.
+
+### Component 1: Fine-Tuned Mistral 7B for SQL Generation
+
+Mistral 7B has demonstrated strong performance in text-to-SQL tasks. The fine-tuning process uses Parameter-Efficient Fine-Tuning (PEFT) with QLoRA (Quantization + Low-Rank Adaptation) to minimize computational requirements while achieving domain-specific accuracy.
+
+**Base Configuration:**
+- Model: `mistralai/Mistral-7B-Instruct-v0.1`
+- Training data: `b-mc2/sql-create-context` dataset + company-specific SQL patterns
+- Method: 4-bit quantization with LoRA adapters
+- Expected accuracy: ~76% on standard benchmarks, **93%+ with domain tuning** (based on our previous implementation)
+
+**Training Script:** See [setup-a-mistral-rag/fine-tuning/train_lora.py](https://github.com/janovincze/powerbi-llm-stack/blob/main/setup-a-mistral-rag/fine-tuning/train_lora.py) for the complete QLoRA fine-tuning implementation.
+
+### Component 2: Iterative Refinement with Full Data Access
+
+Because the LLM runs locally, you can safely show it query results and let it improve. The `IterativeSQLGenerator` class handles the generate → execute → analyze → refine loop with full data access.
+
+**Implementation:** See [setup-a-mistral-rag/inference/iterative_generator.py](https://github.com/janovincze/powerbi-llm-stack/blob/main/setup-a-mistral-rag/inference/iterative_generator.py) for the complete implementation with result analysis and prompt history management.
+
+### Component 3: RAG Knowledge Pipeline
+
+The RAG pipeline ensures your LLM has access to current business context without requiring retraining:
+
+| Source | Content | Update Frequency |
+|--------|---------|------------------|
+| Confluence | Business definitions, process docs, glossary | Daily |
+| Snowflake Schema | Table DDL, column descriptions | On schema change |
+| dbt Manifest | Model lineage, tests, documentation | On dbt run |
+| PowerBI Semantic Model | Measures, relationships, DAX logic | On publish |
+
+### Infrastructure Requirements
+
+The good news: **you can train and run Mistral 7B locally on a MacBook** with Apple Silicon (M1/M2/M3 with 16GB+ RAM) or any machine with a decent GPU. Enterprise-scale deployment requires more, but getting started is accessible.
+
+| Tier | Hardware | Use Case | Cost |
+|------|----------|----------|------|
+| **Development** | MacBook M1/M2/M3 (16GB+) | Training, testing, single-user | ~$0 (existing hardware) |
+| **Small Team** | Mac Studio M2 Ultra or RTX 4090 | 5-10 concurrent users | $3k-5k one-time |
+| **Production** | NVIDIA A100 or cloud GPU | Enterprise scale | $2/hr cloud or $15k+ purchase |
+
+**Additional components:**
+| Component | Specification | Cost |
+|-----------|--------------|------|
+| Vector DB | Qdrant (self-hosted) | Free (open-source) |
+| Storage | 100GB SSD | Minimal |
+| Orchestration | Docker | Free |
+
+**The real cost is expertise**, not hardware. Fine-tuning requires understanding of:
+- QLoRA/LoRA techniques
+- Dataset preparation
+- Evaluation metrics
+- Deployment patterns
+
+We provide a complete guide in the companion repository to help you get started—see [setup-a-mistral-rag/fine-tuning/](https://github.com/janovincze/powerbi-llm-stack/tree/main/setup-a-mistral-rag/fine-tuning) for step-by-step instructions that work on consumer hardware.
+
+**Pros:**
+- Full data sovereignty—data never leaves your infrastructure
+- Iterative refinement with actual data is safe
+- **Can start on a MacBook** for development and testing
+- Predictable costs at scale (breakeven at >2M tokens/day)
+- Deep customization for company terminology
+- HIPAA/PCI compliance friendly
+
+**Cons:**
+- Requires ML/AI expertise for fine-tuning and maintenance
+- Lower baseline capability than frontier models (but 93%+ with tuning!)
+- Slower iteration cycle for model improvements
+- Production deployment needs dedicated infrastructure
+
+---
+
+## Iterative Refinement—How LLMs Improve with Data Access
 
 One of the most powerful patterns is **letting the LLM see query results and iterate**. This dramatically improves accuracy but has privacy implications.
 
 ### The Iteration Loop
 
-![Iterative Refinement Loop](docs/diagrams/iterative-refinement-loop.png)
+![Iterative Refinement Loop](images/iterative-refinement-loop.svg)
 
 The loop follows this pattern: User Question → Generate SQL/DAX → Execute Query → Analyze Results → If satisfactory, return; otherwise, Refine Query and loop back.
 
@@ -277,11 +386,11 @@ The loop follows this pattern: User Question → Generate SQL/DAX → Execute Qu
 
 | Approach | Data Exposure | Where Safe |
 |----------|--------------|------------|
-| Self-hosted LLM | None | Always safe |
+| Claude + MCP (Schema only) | Schema metadata only | Safe for SQL/DAX generation |
+| Claude + MCP (Aggregated) | Aggregated metrics | Usually safe—no PII |
 | Snowflake Cortex | Within Snowflake | Safe—data stays in warehouse |
-| External API + Schema only | Schema metadata only | Safe for SQL generation |
-| External API + Aggregated results | Aggregated metrics | Usually safe—no PII |
-| External API + Raw data | Full row data | Requires data handling review |
+| Self-hosted LLM | None | Always safe—full data access |
+| External API + Raw data | Full row data | Requires enterprise agreement |
 
 ### Practical Implementation
 
@@ -291,36 +400,37 @@ The `SafeIterativeGenerator` class supports configurable data exposure levels: `
 
 ---
 
-## Section 6: Comparison Matrix
+## Comparison Matrix
 
 ### Side-by-Side Analysis
 
-| Criteria | Option 1 (Self-Hosted) | Option 2 (Cortex) | Claude Opus 4.5 (API) |
-|----------|------------------------|-------------------|----------------------|
-| **Data Privacy** | Full control—data never leaves | Data stays in Snowflake | Schema-only recommended |
-| **Initial Setup Cost** | $0-5k (dev) to $15k+ (prod) | Minimal (existing Snowflake) | Minimal (~$5k) |
-| **Running Cost** | Fixed (low for dev, $3k+ prod) | Credit-based (variable) | Token-based (variable) |
-| **Time to Deploy** | 2-4 months | Days to weeks | Days |
-| **SQL/DAX Accuracy** | **93%+** (domain-tuned) | ~90% (Claude via Cortex) | **95%+** (game changer) |
-| **Iterative Refinement** | Full data access, safe | Full data access, safe | Schema-only (or aggregated) |
-| **Streamlit Generation** | Requires separate deployment | Native support | Via code generation |
-| **PowerBI Integration** | Via API/manual | Via API/manual | Via API/manual |
-| **Maintenance** | High (ML team needed) | Low (managed service) | Low (API client) |
-| **Customization** | Deep (fine-tuning) | Prompt-based only | Prompt-based only |
+| Criteria | Option 1 (Claude + MCP) | Option 2 (Cortex) | Option 3 (Self-Hosted) |
+|----------|-------------------------|-------------------|------------------------|
+| **Data Privacy** | Schema-only recommended | Data stays in Snowflake | Full control—data never leaves |
+| **Initial Setup Cost** | Minimal (~$5k) | Minimal (existing Snowflake) | $0-5k (dev) to $15k+ (prod) |
+| **Running Cost** | Token-based (variable) | Credit-based (variable) | Fixed (low for dev, $3k+ prod) |
+| **Time to Deploy** | Days | Days to weeks | 2-4 months |
+| **SQL/DAX Accuracy** | **95%+** (game changer) | ~90% (Claude via Cortex) | **93%+** (domain-tuned) |
+| **Iterative Refinement** | Schema-only (or aggregated) | Full data access, safe | Full data access, safe |
+| **Streamlit Generation** | Via code generation | Native support | Requires separate deployment |
+| **PowerBI Integration** | Via MCP + API | Via API/manual | Via API/manual |
+| **Maintenance** | Low (API client) | Low (managed service) | High (ML team needed) |
+| **Customization** | Prompt-based + MCP context | Prompt-based only | Deep (fine-tuning) |
 
 ### Decision Framework
 
 ![Decision Framework](docs/diagrams/decision-framework.png)
 
 **Quick decision path:**
-1. **Already using Snowflake?** → Yes: Cortex is the easy choice (data already there)
-2. **Strict compliance (HIPAA, PCI, GDPR)?** → Yes: Self-hosted or Cortex (both keep data in your control)
-3. **Need deep domain customization?** → Yes: Self-hosted (fine-tuning enables this)
-4. **Have ML engineering team?** → Yes: Self-hosted may be cost-effective at scale; No: Cortex (managed service)
+1. **Need fastest time to value with highest accuracy?** → Yes: Option 1 (Claude + MCP)—95%+ accuracy in days
+2. **Strict compliance (HIPAA, PCI, GDPR)?** → Yes: Option 2 (Cortex) or Option 3 (Self-hosted)—both keep data in your control
+3. **Already using Snowflake?** → Yes: Option 2 (Cortex) is the easy choice (data already there)
+4. **Need deep domain customization?** → Yes: Option 3 (Self-hosted)—fine-tuning enables this
+5. **Have ML engineering team?** → Yes: Option 3 may be cost-effective at scale; No: Option 1 or 2
 
 ---
 
-## Section 7: The Hybrid Approach—Best of All Worlds
+## The Hybrid Approach—Best of All Worlds
 
 For many enterprises, the optimal solution combines multiple approaches based on use case, sensitivity, and cost.
 
@@ -329,20 +439,20 @@ For many enterprises, the optimal solution combines multiple approaches based on
 ![Enterprise Hybrid Architecture](docs/diagrams/hybrid-architecture.png)
 
 The hybrid architecture routes requests based on data sensitivity, complexity, location, and cost constraints to the appropriate backend:
-- **Cortex**: For data in Snowflake needing full data access
-- **Self-Hosted Mistral**: For sensitive batch jobs with full data access
-- **Claude Haiku (API)**: For simple metadata-only queries
-- **Claude Opus (API)**: For complex analysis with aggregated data only
+- **Claude Opus + MCP (Option 1)**: For complex analysis requiring highest accuracy with schema/aggregated data
+- **Claude Haiku + MCP**: For simple metadata-only queries (cost optimization)
+- **Cortex (Option 2)**: For data in Snowflake needing full data access
+- **Self-Hosted Mistral (Option 3)**: For sensitive batch jobs with full data access
 
 ### Routing Logic Implementation
 
 The `HybridRouter` class evaluates each request based on data sensitivity, complexity, data source, and iteration requirements to select the optimal backend.
 
 **Key routing rules:**
-1. Data in Snowflake + needs iteration → Cortex
-2. Sensitive data + requires iteration → Self-hosted Mistral (only safe option)
-3. Simple queries → Cheapest option (Haiku or Cortex)
-4. Complex analysis → Best model (Opus with schema-only, or Cortex for full data)
+1. Complex analysis + schema-only safe → Claude Opus + MCP (highest accuracy)
+2. Data in Snowflake + needs iteration → Cortex (data stays in warehouse)
+3. Sensitive data + requires iteration → Self-hosted Mistral (only safe option for full data)
+4. Simple queries → Claude Haiku + MCP (cost optimization)
 
 **Full Implementation:** See [ba-copilot-addon/backend/app/services/hybrid_router.py](https://github.com/janovincze/powerbi-llm-stack/blob/main/ba-copilot-addon/backend/app/services/hybrid_router.py) for the complete routing logic with all execution methods.
 
@@ -350,10 +460,11 @@ The `HybridRouter` class evaluates each request based on data sensitivity, compl
 
 | Query Type | Recommended Route | Cost per 1000 queries |
 |------------|-------------------|----------------------|
-| Simple lookups | Claude Haiku API | ~$0.50 |
-| Standard SQL generation | Cortex (if Snowflake) | ~$2-5 |
+| Simple lookups | Claude Haiku + MCP | ~$0.50 |
+| Standard SQL generation | Claude Sonnet + MCP | ~$5-10 |
+| Complex multi-step | Claude Opus + MCP | ~$50 |
+| Data in Snowflake + iteration | Cortex | ~$2-5 |
 | Sensitive data analysis | Self-hosted Mistral | Fixed cost |
-| Complex multi-step | Claude Opus (schema only) | ~$50 |
 | Batch processing (millions) | Self-hosted Mistral | Fixed cost |
 
 ### Monitoring & Observability
@@ -364,24 +475,25 @@ The `HybridMetrics` class tracks usage across all backends for cost and quality 
 
 ### Production Deployment Checklist
 
-**For Cortex:**
+**For Option 1 (Claude + MCP):**
+- [ ] Anthropic API key with appropriate tier
+- [ ] MCP servers installed and configured (Snowflake, Confluence, dbt, PowerBI)
+- [ ] Enterprise agreement for zero-retention (if iterating with data)
+- [ ] Rate limiting and budget alerts configured
+- [ ] Schema extraction pipeline automated
+
+**For Option 2 (Cortex):**
 - [ ] Snowflake account with Cortex enabled
 - [ ] Appropriate compute warehouse sizing
 - [ ] RBAC configured for LLM functions
 - [ ] Streamlit in Snowflake enabled (if generating apps)
 
-**For Self-Hosted:**
+**For Option 3 (Self-Hosted):**
 - [ ] GPU infrastructure provisioned (A100 or equivalent)
 - [ ] Model downloaded and fine-tuned
 - [ ] vLLM or similar serving framework deployed
 - [ ] RAG pipeline configured and indexed
 - [ ] Monitoring and alerting in place
-
-**For API (Claude):**
-- [ ] Enterprise agreement for zero-retention (if needed)
-- [ ] API keys securely stored
-- [ ] Rate limiting and budget alerts configured
-- [ ] Schema extraction pipeline automated
 
 **For Hybrid:**
 - [ ] Router logic implemented and tested
@@ -391,7 +503,7 @@ The `HybridMetrics` class tracks usage across all backends for cost and quality 
 
 ---
 
-## Section 8: Template-Based Design Patterns
+## Template-Based Design Patterns
 
 Maintaining consistency across dashboards is critical for enterprise adoption. This section covers strategies for enforcing company standards through templates.
 
@@ -409,7 +521,7 @@ YAML-based prompt templates that include company design guidelines, terminology,
 
 ---
 
-## Section 9: PowerBI Add-On Concept for Business Analysts
+## PowerBI Add-On Concept for Business Analysts
 
 A custom PowerBI visual can embed LLM capabilities directly in reports. The full implementation is available in the companion repository.
 
@@ -467,25 +579,31 @@ powerbi-llm-stack/
 
 Integrating LLMs with your data stack unlocks powerful capabilities, but the approach matters. Here's the decision framework:
 
-**Choose Option 1 (Self-Hosted Mistral + RAG) when:**
-- Data sovereignty is paramount
-- You process high volumes (>2M tokens/day)
-- You need deep domain customization
-- You have ML engineering capacity
+**Choose Option 1 (Claude Opus 4.5 + MCP) when:**
+- You need the highest accuracy (95%+) with fastest deployment
+- Schema-only or aggregated data access is acceptable
+- You want continuous model improvements without maintenance
+- Time to value is critical
 
 **Choose Option 2 (Snowflake Cortex) when:**
 - You're already on Snowflake
-- You want managed infrastructure
+- You want managed infrastructure with full data access
 - You need native Streamlit generation
-- Quick deployment is priority
+- Data must stay within the warehouse
+
+**Choose Option 3 (Self-Hosted Mistral + RAG) when:**
+- Data sovereignty is paramount—no external API calls allowed
+- You process high volumes (>2M tokens/day)
+- You need deep domain customization via fine-tuning
+- You have ML engineering capacity
 
 **Choose Hybrid when:**
 - You have mixed sensitivity data
-- You want cost optimization
-- Different use cases have different needs
+- You want cost optimization across use cases
+- Different queries have different privacy requirements
 - You want flexibility for future changes
 
-The key insight: **iterative refinement with data access dramatically improves results**, but this is only safe with self-hosted or Cortex approaches. External APIs should only see schema and aggregated results.
+The key insight: **Claude Opus 4.5 + MCP provides the best accuracy and fastest deployment** for most use cases. However, when you need iterative refinement with full data access, Cortex or self-hosted approaches are necessary. Match the approach to your data sensitivity requirements.
 
 The future of business intelligence is conversational. By implementing the patterns in this guide, you'll position your organization to leverage AI-powered analytics while maintaining the governance and data privacy that enterprise environments require.
 

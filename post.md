@@ -50,56 +50,6 @@ When Claude has access to your actual schema, your query history, and your busin
 
 ---
 
-## Snowflake Cortex: Context Is Everything
-
-Here's where it gets really interesting. Snowflake Cortex AI lets you run LLMs directly where your data lives—no data movement, no external API calls for sensitive information.
-
-**Basic Text-to-SQL with Cortex**
-```sql
--- Simple completion with Snowflake Arctic
-SELECT SNOWFLAKE.CORTEX.COMPLETE(
-    'snowflake-arctic',
-    'Write a SQL query to find top 10 customers by total revenue'
-);
-```
-
-**Analyze Reviews at Scale**
-```sql
--- Process every row in a table with an LLM
-SELECT
-    review_id,
-    SNOWFLAKE.CORTEX.COMPLETE(
-        'claude-4-sonnet',
-        CONCAT('Summarize this customer feedback: <review>', content, '</review>')
-    ) as summary
-FROM customer_reviews
-LIMIT 100;
-```
-
-**Structured Analysis with System Prompts**
-```sql
--- Use conversation format for complex analysis
-SELECT SNOWFLAKE.CORTEX.COMPLETE(
-    'mistral-large2',
-    [
-        {'role': 'system', 'content': 'You are a BI analyst. Generate DAX measures following best practices. Use VAR for intermediate calculations.'},
-        {'role': 'user', 'content': 'Create a YoY revenue comparison measure for PowerBI'}
-    ],
-    {'temperature': 0.3, 'max_tokens': 500}
-);
-```
-
-**Available Models in Cortex**
-- `claude-4-opus`, `claude-4-sonnet`, `claude-3-5-sonnet`
-- `mistral-large2`, `mistral-7b`
-- `llama3.1-70b`, `llama3.1-405b`
-- `snowflake-arctic` (Snowflake's own model)
-- `openai-gpt-4.1`
-
-The key advantage? Your data never leaves Snowflake's secure environment.
-
----
-
 ## From Natural Language to PowerBI DAX
 
 The pipeline looks like this:
@@ -228,7 +178,7 @@ Want to go fully self-hosted? Check out my previous article where I walk through
 
 ## The Bottom Line
 
-The tools are here. Claude Opus 4.5 has the reasoning capability. MCP servers provide the context. Snowflake Cortex offers native integration. MotherDuck is pushing serverless analytics forward.
+The tools are here. Claude Opus 4.5 has the reasoning capability. MCP servers provide the context. MotherDuck is pushing serverless analytics forward.
 
 The question isn't whether AI will change how we build dashboards.
 
@@ -244,5 +194,4 @@ It's whether you'll be the one leading that change on your team.
 - [Build Your Own BI Assistant: Fine-Tuning a Local LLM](https://www.linkedin.com/pulse/build-your-own-bi-assistant-fine-tuning-local-llm-knows-janos-vincze-0wflf/) - My previous article on achieving 93%+ accuracy with self-hosted models
 - [MotherDuck MCP Demo with Ryan Boyd & Jacob Matson](https://streamyard.com/watch/Cajp4Ebt9uQc)
 - [Model Context Protocol Documentation](https://modelcontextprotocol.io/)
-- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
 - [PowerBI Modeling MCP Server](https://github.com/microsoft/powerbi-modeling-mcp)
